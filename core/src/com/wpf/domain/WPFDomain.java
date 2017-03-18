@@ -11,7 +11,7 @@ import com.wpf.domain.main_menu.MainMenu;
 import com.wpf.domain.main_menu.MenuItem;
 import com.wpf.domain.settings.Settings;
 
-public class GameApplication implements InputProcessor {
+public class WPFDomain implements InputProcessor {
 
     private final GameApplicationObserver observer;
 
@@ -64,7 +64,7 @@ public class GameApplication implements InputProcessor {
         }
     };
 
-    public GameApplication(GameApplicationObserver observer) {
+    public WPFDomain(GameApplicationObserver observer) {
         this.observer = observer;
 
         mainMenu = new MainMenu(menuItemsObserver);
