@@ -13,7 +13,7 @@ import com.wpf.domain.settings.Settings;
 
 public class WPFDomain implements InputProcessor {
 
-    private final GameApplicationObserver observer;
+    private final WPFDomainObserver observer;
 
     private final Screen mainMenu;
     private final Screen settings;
@@ -64,7 +64,7 @@ public class WPFDomain implements InputProcessor {
         }
     };
 
-    public WPFDomain(GameApplicationObserver observer) {
+    public WPFDomain(WPFDomainObserver observer) {
         this.observer = observer;
 
         mainMenu = new MainMenu(menuItemsObserver);

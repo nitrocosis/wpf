@@ -2,7 +2,7 @@ package com.wpf.domain;
 
 import com.wpf.domain.common.Screen;
 
-public interface GameApplicationObserver {
+public interface WPFDomainObserver {
     void onScreenFocusGained(Screen screen);
 
     void onScreenFocusLost(Screen screen);
