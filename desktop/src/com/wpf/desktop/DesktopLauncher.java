@@ -2,7 +2,7 @@ package com.wpf.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.wpf.gdx.WPF;
+import com.wpf.presentation.WPF;
 
 public class DesktopLauncher {
 

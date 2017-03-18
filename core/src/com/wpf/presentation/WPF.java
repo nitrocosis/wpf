@@ -1,4 +1,4 @@
-package com.wpf.gdx;
+package com.wpf.presentation;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
