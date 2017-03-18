@@ -15,6 +15,6 @@ public class AndroidLauncher extends AndroidApplication {
         config.useCompass = false;
         config.useWakelock = true;
         config.resolutionStrategy = new RatioResolutionStrategy(16f, 9f);
-        initialize(new WPF(), config);
+        initialize(new com.wpf.gdx.WPF(), config);
     }
 }
