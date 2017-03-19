@@ -5,7 +5,7 @@ import android.os.Bundle;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.badlogic.gdx.backends.android.surfaceview.RatioResolutionStrategy;
-import com.wpf.presentation.WPFPresentation;
+import com.wpf.presentation.gdx.WPFGdxApplication;
 
 public class AndroidLauncher extends AndroidApplication {
     @Override
@@ -16,6 +16,6 @@ public class AndroidLauncher extends AndroidApplication {
         config.useCompass = false;
         config.useWakelock = true;
         config.resolutionStrategy = new RatioResolutionStrategy(16f, 9f);
-        initialize(new WPFPresentation(), config);
+        initialize(new WPFGdxApplication(), config);
     }
 }
