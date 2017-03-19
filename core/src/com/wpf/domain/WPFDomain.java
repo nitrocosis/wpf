@@ -15,7 +15,7 @@ import com.wpf.domain.settings.SettingsScreenObserver;
 
 public class WPFDomain implements InputProcessor {
 
-    private final WPFDomainDelegate delegate;
+    private final WPFDomainObserver observer;
 
     private final MainMenuScreen mainMenuScreen;
     private final GameScreen gameScreen;
@@ -27,7 +27,7 @@ public class WPFDomain implements InputProcessor {
     private final MainMenuScreenObserver mainMenuScreenObserver = new MainMenuScreenObserver() {
         @Override
         public void onFocusGained() {
-            delegate.startPresenting(mainMenuScreen);
+            observer.onFocusGained(mainMenuScreen);
         }
 
         @Override
@@ -49,19 +49,19 @@ public class WPFDomain implements InputProcessor {
 
         @Override
         public void onFocusLost() {
-            delegate.stopPresenting();
+            observer.onFocusLost(mainMenuScreen);
         }
     };
 
     private final GameScreenObserver gameScreenObserver = new GameScreenObserver() {
         @Override
         public void onFocusGained() {
-            delegate.startPresenting(gameScreen);
+            observer.onFocusGained(gameScreen);
         }
 
         @Override
         public void onFocusLost() {
-            delegate.stopPresenting(gameScreen);
+            observer.onFocusLost(gameScreen);
             focusScreen(mainMenuScreen);
         }
     };
@@ -69,12 +69,12 @@ public class WPFDomain implements InputProcessor {
     private final SettingsScreenObserver settingsScreenObserver = new SettingsScreenObserver() {
         @Override
         public void onFocusGained() {
-            delegate.startPresenting(settingsScreen);
+            observer.onFocusGained(settingsScreen);
         }
 
         @Override
         public void onFocusLost() {
-            delegate.stopPresenting(settingsScreen);
+            observer.onFocusLost(settingsScreen);
             focusScreen(mainMenuScreen);
         }
     };
@@ -82,18 +82,18 @@ public class WPFDomain implements InputProcessor {
     private final CreditsScreenObserver creditsScreenObserver = new CreditsScreenObserver() {
         @Override
         public void onFocusGained() {
-            delegate.startPresenting(creditsScreen);
+            observer.onFocusGained(creditsScreen);
         }
 
         @Override
         public void onFocusLost() {
-            delegate.stopPresenting(creditsScreen);
+            observer.onFocusLost(creditsScreen);
             focusScreen(mainMenuScreen);
         }
     };
 
-    public WPFDomain(WPFDomainDelegate delegate) {
-        this.delegate = delegate;
+    public WPFDomain(WPFDomainObserver observer) {
+        this.observer = observer;
 
         mainMenuScreen = new MainMenuScreen();
         gameScreen = new GameScreen();
