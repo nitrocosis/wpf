@@ -1,41 +1,29 @@
 package com.wpf.domain.common;
 
-public abstract class ListScreen<T> implements Screen {
+public abstract class ListScreen<K, V extends ListScreenObserver<K>> extends Screen<V> {
 
-    private final ListManager<T> itemsManager;
-    private final ListInputProcessor<T> inputProcessor;
+    protected final ListManager<K> itemsManager;
+    private final ListInputProcessor<K> inputProcessor;
 
-    protected ListScreen(ListOrientation listOrientation, T[] items) {
-        this(listOrientation, items, null);
-    }
-
-    protected ListScreen(ListOrientation listOrientation, T[] items, ListObserver<T> itemsObserver) {
-        itemsManager = new ListManager<T>(items, itemsObserver);
-        inputProcessor = new ListScreenInputProcessor(itemsManager, listOrientation);
+    protected ListScreen(K[] items, boolean isVertical) {
+        itemsManager = new ListManager<K>(items);
+        inputProcessor = new ListInputProcessor<K>(itemsManager, isVertical);
     }
 
     @Override
-    public InputProcessor inputProcessor() {
-        return inputProcessor;
+    public void addObserver(V observer) {
+        super.addObserver(observer);
+        itemsManager.addObserver(observer);
     }
 
-    protected boolean onProcessInput(Input input) {
-        return false;
+    @Override
+    public void removeObserver(V observer) {
+        super.removeObserver(observer);
+        itemsManager.removeObserver(observer);
     }
 
-    protected void setListObserver(ListObserver<T> listObserver) {
-        itemsManager.setObserver(listObserver);
-    }
-
-    private class ListScreenInputProcessor extends ListInputProcessor<T> {
-
-        private ListScreenInputProcessor(ListManager<T> listManager, ListOrientation listOrientation) {
-            super(listManager, listOrientation);
-        }
-
-        @Override
-        public boolean processInput(Input input) {
-            return onProcessInput(input) || super.processInput(input);
-        }
+    @Override
+    public boolean processInput(Input input) {
+        return inputProcessor.processInput(input) || super.processInput(input);
     }
 }

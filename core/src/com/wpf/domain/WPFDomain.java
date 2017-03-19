@@ -1,81 +1,93 @@
 package com.wpf.domain;
 
-import com.wpf.domain.common.ExitObserver;
 import com.wpf.domain.common.Input;
 import com.wpf.domain.common.InputProcessor;
-import com.wpf.domain.common.ListObserver;
 import com.wpf.domain.common.Screen;
-import com.wpf.domain.common.SimpleListObserver;
-import com.wpf.domain.credits.Credits;
-import com.wpf.domain.main_menu.MainMenu;
-import com.wpf.domain.main_menu.MenuItem;
-import com.wpf.domain.settings.Settings;
+import com.wpf.domain.credits.CreditsScreen;
+import com.wpf.domain.credits.CreditsScreenObserver;
+import com.wpf.domain.game.GameScreen;
+import com.wpf.domain.game.GameScreenObserver;
+import com.wpf.domain.main_menu.MainMenuItems;
+import com.wpf.domain.main_menu.MainMenuScreen;
+import com.wpf.domain.main_menu.MainMenuScreenObserver;
+import com.wpf.domain.settings.SettingsScreen;
+import com.wpf.domain.settings.SettingsScreenObserver;
 
 public class WPFDomain implements InputProcessor {
 
     private final WPFDomainObserver observer;
 
-    private final Screen mainMenu;
-    private final Screen settings;
-    private final Screen credits;
+    private final MainMenuScreen mainMenuScreen;
+    private final GameScreen gameScreen;
+    private final SettingsScreen settingsScreen;
+    private final CreditsScreen creditsScreen;
 
     private Screen focusedScreen;
 
-    private final ListObserver<MenuItem> menuItemsObserver = new SimpleListObserver<MenuItem>() {
+    private final MainMenuScreenObserver mainMenuScreenObserver = new MainMenuScreenObserver() {
         @Override
-        public void onItemSelected(MenuItem item) {
+        public void onItemSelected(MainMenuItems item) {
             switch (item) {
                 case PLAY:
-                    // TODO
+                    focusScreen(gameScreen);
                     break;
                 case SETTINGS:
-                    focusScreen(settings);
+                    focusScreen(settingsScreen);
                     break;
                 case CREDITS:
-                    focusScreen(credits);
+                    focusScreen(creditsScreen);
                     break;
                 default:
-                    throw new IllegalArgumentException("Unhandled MenuItem " + item);
+                    throw new IllegalArgumentException("Unhandled MainMenuItems " + item);
             }
         }
-    };
-
-    private final Settings.SettingsObserver settingsObserver = new Settings.SettingsObserver() {
-        @Override
-        public void onBGMToggled(boolean bgmOn) {
-            observer.onBGMToggled(bgmOn);
-        }
 
         @Override
-        public void onSFXToggled(boolean sfxOn) {
-            observer.onSFXToggled(sfxOn);
-        }
-
-        @Override
-        public void onExit() {
-            focusScreen(mainMenu);
+        public void onFocusLost() {
+            observer.onExit();
         }
     };
 
-    private final ExitObserver creditsExitObserver = new ExitObserver() {
+    private final GameScreenObserver gameScreenObserver = new GameScreenObserver() {
         @Override
-        public void onExit() {
-            focusScreen(mainMenu);
+        public void onFocusLost() {
+            focusScreen(mainMenuScreen);
+        }
+    };
+
+    private final SettingsScreenObserver settingsScreenObserver = new SettingsScreenObserver() {
+        @Override
+        public void onFocusLost() {
+            focusScreen(mainMenuScreen);
+        }
+    };
+
+    private final CreditsScreenObserver creditsScreenObserver = new CreditsScreenObserver() {
+        @Override
+        public void onFocusLost() {
+            focusScreen(mainMenuScreen);
         }
     };
 
     public WPFDomain(WPFDomainObserver observer) {
         this.observer = observer;
 
-        mainMenu = new MainMenu(menuItemsObserver);
-        settings = new Settings(settingsObserver);
-        credits = new Credits(creditsExitObserver);
-        focusedScreen = mainMenu;
+        mainMenuScreen = new MainMenuScreen();
+        gameScreen = new GameScreen();
+        settingsScreen = new SettingsScreen();
+        creditsScreen = new CreditsScreen();
+
+        mainMenuScreen.addObserver(mainMenuScreenObserver);
+        gameScreen.addObserver(gameScreenObserver);
+        settingsScreen.addObserver(settingsScreenObserver);
+        creditsScreen.addObserver(creditsScreenObserver);
+
+        focusScreen(mainMenuScreen);
     }
 
     @Override
     public boolean processInput(Input input) {
-        return focusedScreen.inputProcessor().processInput(input);
+        return focusedScreen.processInput(input);
     }
 
     private void focusScreen(Screen screen) {
@@ -83,8 +95,7 @@ public class WPFDomain implements InputProcessor {
             return;
         }
 
-        observer.onScreenFocusLost(focusedScreen);
+        focusedScreen.gainFocus();
         focusedScreen = screen;
-        observer.onScreenFocusGained(focusedScreen);
     }
 }

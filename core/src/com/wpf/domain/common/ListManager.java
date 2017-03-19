@@ -1,45 +1,57 @@
 package com.wpf.domain.common;
 
-class ListManager<T> {
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+public class ListManager<T> {
 
     private final T[] items;
-    private ListObserver<T> observer;
+    private final Set<ListObserver<T>> observers = new LinkedHashSet<ListObserver<T>>();
     private int focusedItemIndex;
 
-    ListManager(T[] items, ListObserver<T> observer) {
+    ListManager(T[] items) {
         this.items = items;
-        this.observer = observer;
     }
 
-    void setObserver(ListObserver<T> observer) {
-        this.observer = observer;
+    public void addObserver(ListObserver<T> observer) {
+        observers.add(observer);
+    }
+
+    public void removeObserver(ListObserver<T> observer) {
+        observers.remove(observer);
     }
 
     void focusPreviousItem() {
         if (focusedItemIndex > 0) {
             focusedItemIndex--;
-            if (observer != null) {
-                observer.onItemFocused(focusedItem());
-            }
+            notifyObserversItemFocused();
         }
     }
 
     void focusNextItem() {
         if (focusedItemIndex < items.length - 1) {
             focusedItemIndex++;
-            if (observer != null) {
-                observer.onItemFocused(focusedItem());
-            }
+            notifyObserversItemFocused();
         }
     }
 
     void selectFocusedItem() {
-        if (observer != null) {
-            observer.onItemSelected(focusedItem());
-        }
+        notifyObserversItemSelected();
     }
 
     private T focusedItem() {
         return items[focusedItemIndex];
+    }
+
+    private void notifyObserversItemFocused() {
+        for (ListObserver<T> observer : observers) {
+            observer.onItemFocused(focusedItem());
+        }
+    }
+
+    private void notifyObserversItemSelected() {
+        for (ListObserver<T> observer : observers) {
+            observer.onItemSelected(focusedItem());
+        }
     }
 }

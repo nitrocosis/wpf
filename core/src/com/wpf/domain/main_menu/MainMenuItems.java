@@ -1,5 +1,5 @@
 package com.wpf.domain.main_menu;
 
-public enum MenuItem {
+public enum MainMenuItems {
     PLAY, SETTINGS, CREDITS
 }

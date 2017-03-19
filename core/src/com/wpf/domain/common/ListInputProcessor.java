@@ -3,54 +3,42 @@ package com.wpf.domain.common;
 public class ListInputProcessor<T> implements InputProcessor {
 
     private final ListManager<T> listManager;
-    private final ListOrientation listOrientation;
 
-    public ListInputProcessor(ListManager<T> listManager, ListOrientation listOrientation) {
+    private final InputCommandProcessor inputCommandProcessor = new InputCommandProcessor();
+
+    private final InputCommand selectFocusedItemCommand = new InputCommand() {
+        @Override
+        public boolean execute() {
+            listManager.selectFocusedItem();
+            return true;
+        }
+    };
+
+    private final InputCommand focusPreviousItemCommand = new InputCommand() {
+        @Override
+        public boolean execute() {
+            listManager.focusPreviousItem();
+            return true;
+        }
+    };
+
+    private final InputCommand focusNextItemCommand = new InputCommand() {
+        @Override
+        public boolean execute() {
+            listManager.focusNextItem();
+            return true;
+        }
+    };
+
+    public ListInputProcessor(ListManager<T> listManager, boolean isVertical) {
         this.listManager = listManager;
-        this.listOrientation = listOrientation;
+        inputCommandProcessor.setCommand(Input.ENTER, selectFocusedItemCommand);
+        inputCommandProcessor.setCommand(isVertical ? Input.UP : Input.LEFT, focusPreviousItemCommand);
+        inputCommandProcessor.setCommand(isVertical ? Input.DOWN : Input.RIGHT, focusNextItemCommand);
     }
 
     @Override
     public boolean processInput(Input input) {
-        switch (input) {
-            case ENTER:
-                listManager.selectFocusedItem();
-                return true;
-        }
-
-        switch (listOrientation) {
-            case VERTICAL:
-                return handleVerticalInput(input);
-            case HORIZONTAL:
-                return handleHorizontalInput(input);
-            default:
-                throw new IllegalArgumentException("Unhandled list orientation");
-        }
-    }
-
-    private boolean handleVerticalInput(Input input) {
-        switch (input) {
-            case UP:
-                listManager.focusPreviousItem();
-                return true;
-            case DOWN:
-                listManager.focusNextItem();
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    private boolean handleHorizontalInput(Input input) {
-        switch (input) {
-            case LEFT:
-                listManager.focusPreviousItem();
-                return true;
-            case RIGHT:
-                listManager.focusNextItem();
-                return true;
-            default:
-                return false;
-        }
+        return inputCommandProcessor.processInput(input);
     }
 }
